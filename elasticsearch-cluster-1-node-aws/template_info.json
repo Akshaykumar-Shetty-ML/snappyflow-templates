@@ -1,0 +1,11 @@
+{
+  "name": "Elasticsearch Cluster - Single Node",
+  "type": "terraform",
+  "app": "elasticsearch",
+  "target_cloud": "aws",
+  "description": "This Elasticsearch cluster supports 1 node with all roles, master, data and ingest. Operating system is Ubuntu 16.04. Includes monitoring of Linux metrics, Elasticsearch cluster metrics, JVM metrics and logs.",
+  "prerequisites": "",
+  "limitations": "",
+  "logo": null,
+  "dashboard_template": "ES Application"
+}

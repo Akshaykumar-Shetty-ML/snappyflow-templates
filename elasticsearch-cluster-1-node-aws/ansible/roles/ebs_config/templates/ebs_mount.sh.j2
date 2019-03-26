@@ -1,0 +1,5 @@
+#!/bin/bash
+mkfs -t ext4 /dev/xvdg
+mkdir /data
+mount /dev/xvdg /data
+echo /dev/xvdg  /data ext4 defaults,nofail 0 2 >> /etc/fstab

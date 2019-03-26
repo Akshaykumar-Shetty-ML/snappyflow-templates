@@ -1,0 +1,3 @@
+- name: create externalURL.joon
+  local_action: template src=externalURL.json.j2 dest="../externalURL.json"
+  become: no

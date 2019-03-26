@@ -1,0 +1,52 @@
+- hosts: all
+  gather_facts: False
+
+  tasks:
+  - name: Wait 300 seconds for port 22 to become open and contain "OpenSSH"
+    wait_for:
+      port: 22
+      host: '{{ (ansible_ssh_host|default(ansible_host))|default(inventory_hostname) }}'
+      search_regex: OpenSSH
+      delay: 30
+      timeout: 600
+      sleep: 30
+    connection: local
+
+  - name: install python on ubuntu
+    raw: test -e /usr/bin/python || (sudo apt -y update && sudo apt install -y python-minimal)
+    register: task_result
+    until: task_result.rc == 0
+    retries: 5
+    delay: 30
+
+
+- hosts: master
+  become: true
+  roles:
+    - {
+        role: ansible-elasticsearch,
+        es_instance_name: "{{ inventory_hostname }}",
+        es_heap_size: "4g",
+        es_config: {
+            cluster.name: "es-cluster",
+            discovery.zen.ping.unicast.hosts: "[\"{{ hostvars.values()|map(attribute='ansible_private_host')|join('\", \"') }}\"]",
+            network.host: "0.0.0.0",
+            network.bind_host: "0.0.0.0",
+            http.port: 9200,
+            transport.tcp.port: 9300,
+            node.data: true,
+            node.master: true,
+            bootstrap.memory_lock: false,
+            node.name: "{{ inventory_hostname }}"
+          }
+    }
+    - configlocal
+  vars:
+    es_scripts: false
+    es_version_lock: false
+    es_major_version: "6.x"
+    es_version: "6.4.0"
+    es_enable_xpack: false
+    es_templates_fileglob: "{{ playbook_dir }}/templates/*.json"
+    es_templates: true
+

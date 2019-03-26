@@ -1,0 +1,10 @@
+
+- name: Transfer the script
+  template: src=ebs_mount.sh.j2 dest=/home/ebs_mount.sh
+
+- name: Mounting
+  become: yes
+  become_method: sudo
+  command: sh /home/ebs_mount.sh
+  register: task_result
+  failed_when: task_result.rc != 0
